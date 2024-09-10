@@ -15,18 +15,14 @@ func main() {
 	rangeSchemaFiles(func(file string) {
 		replacePSQLCommands(file, true)
 	})
-	defer func() {
-		rangeSchemaFiles(func(file string) {
-			replacePSQLCommands(file, false)
-		})
-	}()
 
 	exitCode := sqlc.Run([]string{"generate"})
-	if exitCode != 0 {
-		log.Fatalf("sqlc failed with exit code %d", exitCode)
-	}
 
-	log.Printf("done")
+	rangeSchemaFiles(func(file string) {
+		replacePSQLCommands(file, false)
+	})
+
+	os.Exit(exitCode)
 }
 
 func rangeSchemaFiles(callback func(file string)) {
