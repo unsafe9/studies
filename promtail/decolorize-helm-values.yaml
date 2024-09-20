@@ -1,0 +1,49 @@
+config:
+  logLevel: info
+  clients:
+    - url: http://loki:3100/loki/api/v1/push
+  snippets:
+    pipelineStages:
+      - cri: {}
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - match:
+          selector: '{app="my-server-pod-label"}'
+          stages:
+            - multiline:
+                firstline: '^time='
+            - regex:
+                expression: '(?s)(?P<original>.*)'
+            - decolorize:
+            - regex:
+                expression: '.* peer=(?P<peer>.*) ua=(?P<user_agent>.*) host=.*'
+            - labels:
+                peer: peer
+                user_agent: user_agent
+            - replace:
+                expression: '(?s)(.+)'
+                replace: '{{ .original }}'
+    extraRelabelConfigs:
+      - source_labels:
+          - __meta_kubernetes_pod_name
+        regex: (my-server-pod-prefix-.*)
+        action: keep
+      - source_labels:
+          - __meta_kubernetes_pod_name
+        regex: (exclude-pod-prefix-.*)
+        action: drop
+    common:
+      - action: replace
+        source_labels:
+          - __meta_kubernetes_pod_name
+        target_label: namespace
+      - action: replace
+        source_labels:
+          - __meta_kubernetes_pod_name
+        target_label: pod
+      - action: replace
+        replacement: /var/log/pods/*$1*/*/*.log
+        source_labels:
+          - __meta_kubernetes_pod_name
+        target_label: __path__
