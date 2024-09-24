@@ -1,0 +1,3 @@
+str_value,int_value,time_value,float_value,bool_value,str_array_value,int_array_value,time_array_value,float_array_value,bool_array_value
+hello,1,2024-09-24T06:35:00Z,1.1,true,"[""a"",""b"",""c""]","[1,2,3]","[""2024-09-24T06:35:00Z"",""2024-09-24T06:35:00Z"",""2024-09-24T06:35:00Z""]","[1.1,2.2,3.3]","[true,false,true]"
+world,2,2024-09-24T15:35:48.942296384+09:00,2.2,false,"[""d"",""e"",""f""]","[4,5,6]","[""2024-09-24T06:35:00Z"",""2024-09-24T06:35:00Z"",""2024-09-24T06:35:00Z""]","[4.4,5.5,6.6]","[false,true,false]"
